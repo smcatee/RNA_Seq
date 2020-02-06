@@ -1,0 +1,362 @@
+TF workflow:
+Quality Control and Review
+	RNA extraction QA/QC
+		NanoDrop spectro
+		Aligent 2100
+	mRNA enrichment QA/QC
+	cDNA synth QA/QC
+		bioanalyzer
+			validated with Aligent 2100 Bioanalyzer
+				looks at capillary flow peaks of ribosimal rna 16S and 28S
+				What is our cutoff RIN score? 7? 8?
+			quantified with Qubit 2.0 Flurometer
+	raw read data QA/QC
+		TOOLS: FastQC, NGSQC
+			discard low quality reads/segments/bases: FASTX-Toolkit, Trimmomatic
+		sequence quality
+		GC content
+		presence of adaptors
+		overrepresented k-mers
+		duplicate reads
+		remove joint sequences
+		remove low-quality reads (Sanger base quality < 20)
+	read alignment
+		TOOLS: Picard, RSeQC, Qualimap
+		percentage of mapped reads
+		GC content
+	quantification
+		TOOLS: NOISeq (diagnostic plots), EDASeq (also corrects for GC content)
+		GC content
+		gene length biases
+	batch effect correction
+		COMBAT, ARSyN
+	experimental validation
+		qRT-PCR
+
+	Where do these QC/QA methods fit in??
+		cDNA length
+
+
+RNA Extraction
+	extraction from ground tissue using TRIzol Reagent
+	remove genomic DNA w/ RNase-free DNase I
+	harvested 24 to 48 hr post treatment (https://doi.org/10.1016/j.aquatox.2019.105235)
+
+Transcription prep
+	enrich by poly a selection bc we can get enough sample tissue for this
+	library prep (https://www.sciencedirect.com/science/article/pii/S0166445X19302875?via%3Dihub) ~got 150bp PE reads
+		NEBNext Ultra RNA Library Prep Kit for Illumina (expensive!)
+	mRNA purification
+		oligo(dT) magnetic beads and Oligotex mRNA kits
+	cDNA synth
+		1st strand with: reverse transciptase and random hexamer primers
+		2nd strand with RNase H and DNA polymerase I
+	barcoding (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3508525/)
+
+Transcription and differential gene expression (DTE) Analysis
+	de novo transcript reconstruction
+		SOAPdenovoTran
+		Oases
+		Trans_ABySS
+		Trinity
+		combine all samples into single input, obtain set of contigs, map short reads back for expression estimation
+
+	quantification
+		Sailfish (k-mer counting w/o need for mapping)
+		aggregate raw counts of mapped reads (produces gene transfer format file, GTF)
+			HTSeq-count
+			featureCounts
+		Cufflinks - can use GTF data or infer transcripts de novo
+			uses expectation maximization
+			takes into account non-uniform read distribution along gene length
+		RSEM (RNA-Seq by Expectation Maximization) returns TPM values
+		eXpress
+		kallisto
+
+		best counting methods
+			MISO
+			featureCounts-flat
+			DEXSeq-default (differential exon usage)
+		counting methods to avoid
+			rMAT
+
+	normalizing counts
+		RPKM - reads per kilobase of exon model per million reads
+			within-sample normalization
+		FPKM - fragments per kilobase of exon model per million mapped reads
+			same as RPKM for SE reads
+		TPM - transcripts per million
+		TMM - some sort of normalization tech
+		normalization methods that ignore highly variable/expressed features
+			TMM, DESeq, PoissonSeq, UpperQuartile
+
+
+	differential gene expression analysis
+		edgeR takes raw read counts, performs integrated normalization and diff expression analysis
+		DESeq2 uses negative binomial similar to edgeR (used in https://doi.org/10.1016/j.aquatox.2019.105235)
+		baySeq, EBSeq (Bayesian approaches that describe differences among groups and compute posterior probs)
+		NOISeq, SAMseq make minimal assumptions about the data, estimate null distribution for inferential analysis
+
+	hypothesis testing
+		Benjamini-Hochberg method
+
+
+
+
+
+
+
+
+General Overview:
+Tissue excision → RNA extraction → Enrich by polyA selection → Samples for library construction, transcriptomics, qPCR → cDNA synthesis →  Fragmentation → Size selection → Barcode samples → Send to UCDavis (Illumina) → De novo transcript reconstruction → Raw read quantification → Normalize counts (maybe) → Differential gene expression and/or differential transcript usage → Pretty Graphs!! (data visualization)
+
+
+Detailed Workflow:
+
+~Tissue excision
+?? mg of tissue from (gill?)
+Ideally all tissue is excised at similar times with similar techniques to reduce batch effects
+Timetable of when tissue is excised:
+How many time intervals?  How many from each group for each time?
+Tissues of the same treatment group can be combined before RNA extraction step
+
+~Tissue lysis
+ThermoFisher lists this method as the highest yielding method they recommend
+7.1ug poly(A+)RNA from 0.1g frozen mouse liver tissue
+“Submerging the samples in liquid nitrogen will freeze the tissue pieces most quickly” … “The frozen sample is powdered by grinding the frozen tissue fragments in a prechilled mortar and occasionally adding liquid N2 into the mortar to prevent thawing. Once the tissue is ground to a fine powder, the denaturing solution is added to the mortar, and the semi-frozen mixture is stirred. This mixture can then be thawed and transferred to an appropriate vessel for further processing.”
+
+~RNA extraction
+Trizol 3:1 phase separation followed by isopropanol and ethanol wash (maybe RNA clean)  
+QA/QC: Nanodrop, Bioanalyzer
+
+~Spike-in added to samples
+
+~DNAse
+
+~Enrich by polyA selection
+Oligotex mRNA kits (idk what you’ve used in the past)
+From https://youtu.be/08h3-05Y9JY
+    rRNA reduction
+        Probe for species specific rRNA attached to beads
+        Allows for non-polyA RNA to be sequenced
+    PolyA selection
+        oligoDT attached to beads, wash everything else away
+        Biases to 3’ end if there is any degradation
+    Design oligo primers for known transcriptome, attach to beads
+        Can be purchased, there are many for model organisms
+    
+QA/QC: Bioanalyzer
+
+~cDNA synthesis (can be done before/after fragmentation)
+1st strand: random hexamer primers, reverse transcriptase
+2nd strand: RNase H, DNA Polymerase I
+QA/QC: Bioanalyzer (UC Davis, $12/sample) , Qubit 2.0 Flurometer, qRT-PCR
+
+~Fragmentation (can be done before/after cDNA)
+    Restriction enzymes
+    QA/QC: Bioanalyzer
+
+~Size selection
+    PAGE, SPRI magnetic beads (https://youtu.be/08h3-05Y9JY)
+
+~RNA-Seq Poly-A Library Prep
+(UC Davis, $149/sample) (Do we build a library for each sample or for the whole?)
+
+~Barcode samples (aka Indexing)
+(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3508525/)
+https://www.youtube.com/user/Arturgreensward
+Barcode region is on the end of adaptors used for PCR amplification
+    Make sure 5’ end of A adaptor has phosphate at end of barcode
+Avoid palindromes (just use odd bp length barcodes), Hamming distance of 2+ bases
+Link to barcode generator is in the third video (produces barcode + adaptor sequence)
+
+~Send to UCDavis (Illumina) & receive raw reads
+QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
+
+~AWS Community AMI (https://youtu.be/B69fkgEkCaE)
+    Amazon cloud ‘computer’ that is already setup for bioinformatics work
+    Allows for much faster computing, so we can compare many workflows quickly
+    There are many AMI (Amazon machine image) setup and publically available to copy
+
+~De novo transcript reconstruction
+Aligners
+    Trinity
+    Bowtie/TopHat
+        Low memory use, high time
+STAR
+    Low time use, high memory
+HISAT2
+    Uses indexing to cut down memory and time
+    Splice aware (req ref genome, always??)
+QA/QC: Picard, RSeQC, Qualimap
+Types of QC for alignment
+    3’ and 5’ bias (looks at coverage from beginning to end of reads)
+        The coverage should be mostly equal across 
+    Nucleotide Content
+        Random hexamer primers in cDNA step aren’t totally random
+        The hexamer patterns are overexpressed in the beginning of reads
+            (should explain with a drawing)
+Normal nucleotide content is ~25% for each A, T, G, C
+Only effects the first 10 or so bases (why not only the first 6??)
+Easy to adjust, simply trim first 10 bases if the nucleotide content is out of whack
+        
+    Base/Read Quality
+        Looks at Phred score along the reads. Tends to drop at the end of reads
+        Per Bioinformatics DotCa, Phred > 30 is acceptable
+    Sequencing Depth QC
+        Resampling (taking a fraction of your data and re-analyzing only that fraction)
+        Take increasingly larger fractions of the total reads (randomly chosen reads)
+        For each random subset run a specific analysis (e.g. number of splice junctions)
+        As subsets become larger the analysis output will level out (saturate)
+        Use a type of analysis that directly relates to your experiment
+            (What analysis for differential expression??)
+    Base Distribution
+        Coding, non-coding, etc...
+
+~Raw read quantification (multiple should be tried and compared, per Bioinformatics DotCa)
+Sailfish (raw read input. Does not map reads, instead it uses only direct k-mer counting)
+Aggregate raw counts → infer transcripts (used sometimes)
+HTSeq-count or featureCounts are popular raw count aggregators
+They create a Gene Transfer File format (GTF)
+Cufflinks
+RSEM
+    Built to work well with de novo transcripts
+doesnt need reference genome, but does need previous de novo transcript assembly
+QA/QC: NOISeq, EDASeq
+
+~Normalize counts (maybe)
+RPKM - reads per kilobase of exon model per million reads
+within-sample normalization
+FPKM - fragments per kilobase of exon model per million mapped reads
+       same as RPKM for SE reads
+TPM - transcripts per million
+TMM - some sort of normalization tech
+       normalization methods that ignore highly variable/expressed features
+       TMM, DESeq, PoissonSeq, UpperQuartile
+
+~Batch effect correction (maybe)
+COMBAT, ARSyN
+
+~Differential gene expression and/or differential transcript usage (all can be run and compared)
+Cuffdiff (takes Cufflinks output)
+edgeR takes raw read counts
+performs integrated normalization and diff expression analysis
+DESeq2 uses negative binomial similar to edgeR 
+(https://doi.org/10.1016/j.aquatox.2019.105235)
+baySeq, EBSeq
+(Bayesian approaches that describe differences among groups and compute posterior probs)
+NOISeq, SAMseq make minimal assumptions about the data
+estimate null distribution for inferential analysis
+
+~Hypothesis testing
+    Benjamini-Hochberg method
+
+~Visualization
+A good workflow for exploratory analysis and final visualization using R tools
+    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4387895/
+Some of the quantifiers above also produce count and probability plots
+CummeRbund (Bioconductor)
+    Popular RNA data vis package
+
+~Data publication
+Should produce Integrated Genome Viewer compatible files
+
+BioProject registration is required as part of data deposit to several NCBI primary data archives including SRA, TSA and WGS.
+
+SRA (Sequence Read Archive, takes our raw info from Illumina for reproducibility)
+    https://www.ncbi.nlm.nih.gov/sra/
+
+    
+
+
+Sequence reads data from other experiments
+https://www.ncbi.nlm.nih.gov/sra?term=%22Mytilus%20californianus%22%5Borgn%5D&cmd=DetailsSearch
+
+Definitions:
+
+Amplification:
+    Copying something (RNA, DNA, cDNA, etc..) many times (exponentially)
+Usually used so that there is a higher concentration for the machines to detect
+    Things can be selectively amplified so that they stand out more
+
+Coverage (aka Depth):
+    The amount of times a sequence is read during sequencing
+    Whole RNA → fragmented RNA → converted to cDNA → amplified (copied many times)
+
+Multiplex:
+    To combine all samples for sequencing (using barcodes for each sample)
+
+2100 Bioanalyzer by Aligent:
+    automated electrophoresis tool for the sample quality control of biomolecules
+    Used between RNA extraction/purification steps to assess quality through experiment
+
+NanoDrop Microvolume Spectrophotom//////eter:
+    Biomolecule quantification with 1-2ul of sample
+
+Qubit Fluorometer:
+    Biomolecule quantification with 1ul dilute sample
+
+Spike-in
+    A known RNA sequence of a known concentration that is added to all samples early in the experiment to indirectly test the quality of sampled RNA in each step
+
+Phread Score: https://en.wikipedia.org/wiki/Phred_quality_score
+    During sequencing the machines give a read-quality-score to each base in the sequence
+    Phread quality score = -10 * log10(probability of wrong base)
+    Probability of wrong base = 10^(-Phred/10)
+    E.g.    Phred = 30 has 1/1000 chance of the base being wrong (accuracy = 99.9%)
+        Phred = 50 has 1/100,000 chance of the base being wrong (accuracy = 99.999%)
+
+Duplicates, i.e. PCR Duplication
+    A problem during amplification where certain fragments are duplicated early on and become amplified more than others (since amplification is exponential copying)
+    To find it plot occurrence of reads vs number of reads (log 10)
+        Should be low
+    It is more difficult to correct for this with RNA
+        We expect many duplicate fragments to be created for RNA
+        So need to be more clever to find what is a technical error vs biological variance
+
+FastQC:
+    “A quality control tool for high throughput sequence data.” in Java.  Takes raw reads from Illumina as BAM, SAM, or FastQ files.  Produces summary of data quality with graphs
+
+NGSQC:
+    QC toolkit for Illumina reads. In Perl. Requires Windows or Linux.
+
+FASTX-Toolkit:
+    To process FASTQ files before mapping (incl trim, split samples, rename, masker…)
+
+Trimmomatic:
+    “gentle quality trimming and adapter clipping” for Illumina reads
+
+Picard:
+ala Jean-Luc Picard (Star Trek)
+    Developed and used by Cold Springs Harbor Laboratory
+Command line tools (Java) to take BAM files and produce many many metrics
+There are a lot
+
+RSeQC:
+    “RNA-seq specific modules evaluate sequencing saturation, mapped reads distribution, coverage uniformity, strand specificity, transcript level RNA integrity etc.”
+
+Qualimap:
+    facilitate the quality control of alignment sequencing data and its derivatives like feature counts
+
+NOISeq (Bioconductor):
+    “Exploratory plots to evaluate saturation, count distribution, expression per chromosome, type of detected features, features length, etc.”
+    Makes good plots
+
+EDASeq (Bioconductor):
+    Exploratory Data Analysis toolset for both unmapped or mapped reads
+    Includes normalization, inter sample bias correction, intra sample bias correction, etc
+
+COMBAT (Bioconductor):
+    Tool to remove batch effects from reads
+
+ARSyN (Bioconductor):
+    Filters noise from batch effect
+
+qRT-PCR (real-time reverse transcriptase PCR):
+    PCR technique to determine the amount of cDNA in a sample
+
+Jar file:
+    A group of compressed .java files and metadata
+
+Galaxy workflow creator
+    https://usegalaxy.org/
