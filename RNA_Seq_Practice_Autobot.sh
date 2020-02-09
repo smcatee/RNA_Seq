@@ -22,4 +22,8 @@ curl -o SRA_Files/Raw_BAM_Files/SRR9984974 https://sra-download.ncbi.nlm.nih.gov
 # Convert SRA to SAM and directly into BAM for FastQC and other tools
 for f in SRA_Files/Raw_BAM_Files/*; do sam-dump ${f} | samtools view -bS - > "${f}.bam"; done
 
-# Check that BAM files were created and erase SRA
+# Check that BAM files were created and erase SRA  ?maybe?
+
+
+# Pass split PE reads to trimmomatic
+#   use anon named pipes to pass data in <() or out >()
