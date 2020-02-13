@@ -11,11 +11,13 @@ Quality Control and Review
 				What is our cutoff RIN score? 7? 8?
 			quantified with Qubit 2.0 Flurometer
 	raw read data QA/QC
-		TOOLS: FastQC, NGSQC
+		TOOLS: FastQC, NGSQC, Trimmomatic
 			discard low quality reads/segments/bases: FASTX-Toolkit, Trimmomatic
 		sequence quality
 		GC content
-		presence of adaptors
+		presence of adaptors "read through of adaptors"
+			adaptor anchors in illumina seq methods can be read when fragments are shorter than the read run
+		presence of 'technical sequences'
 		overrepresented k-mers
 		duplicate reads
 		remove joint sequences
