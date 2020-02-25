@@ -183,12 +183,14 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
     Allows for much faster computing, so we can compare many workflows quickly
     There are many AMI (Amazon machine image) setup and publically available to copy
 
-~Trim and QC
+~Trim and QC https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0085024
+	For RNA-Seq must trim rather than correct (correction tools incl ABySS, ALLPATHS-LG)
 Trimmomatic
 	discard low quality reads/segments/bases: FASTX-Toolkit and/or Trimmomatic
-	consider trimming minimally and using minimum read length
+	intermediate Q threshold (~25) produces best output, shoud also use minimum read length cutoff
 		https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
-	
+SolexaQA
+	loose Q threshold (~20) produces best output, should also use minimum read length cutoff
 
 ~De novo transcript reconstruction
 Aligners
