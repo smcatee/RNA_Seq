@@ -1,5 +1,7 @@
 # RNA Seq Data Analysis Practice
 
+## The what and the why
+
 The following steps outline differential gene expression (DGE) data analysis using Mytilus californianus raw read data found at [NCBI Single Read Archive (SRA)](https://www.ncbi.nlm.nih.gov/sra?term=%22Mytilus%20californianus%22%5Borgn%5D&cmd=DetailsSearch).  The entirety of this workflow will require you to use the dreaded command line!
 
 We will be using Unix GNU for a few reasons:
@@ -31,17 +33,11 @@ Here's the rub
 
 ## Downloading and checking data
 
-Common Unix commands to download data are `curl` and `wget`. For our purposes these commands will be sufficient since we are downloading relatively small files (100s of MBs). Many bioinformatics 
+Common Unix commands to download data are `curl` and `wget`. However there is a convenient bioinformatics package called [SRA-Toolkit](www.link.com) which is distributed by NCBI?? This package has tools to download SRA data by passing it the accession number.  We'll use `fastq-dump' because this command can also split our paired reads into individual files as it downloads them.  Meaning, we will end up with one file that is the forward read and another file that is the reverse read. Some tools later will need these separated.
 
-Get raw reads accession numbers
-https://www.ncbi.nlm.nih.gov/sra?term=%22Mytilus%20californianus%22%5Borgn%5D&cmd=DetailsSearch
+Get raw reads accession numbers located at [NCBI Single Read Archive (SRA)](https://www.ncbi.nlm.nih.gov/sra?term=%22Mytilus%20californianus%22%5Borgn%5D&cmd=DetailsSearch)
 
-SRR9984971
-SRR9984973
-SRR9984974
-
-
-curl -O https://sra-download.ncbi.nlm.nih.gov/traces/sra75/SRR/009750/SRR9984971; curl -O https://sra-download.ncbi.nlm.nih.gov/traces/sra19/SRR/009750/SRR9984973; curl -O https://sra-download.ncbi.nlm.nih.gov/traces/sra23/SRR/009750/SRR9984974
+The accession numbers we will be useing are: SRR9984971, SRR9984973, or SRR9984974
 
 
 Download samtools and htslib somewhere
