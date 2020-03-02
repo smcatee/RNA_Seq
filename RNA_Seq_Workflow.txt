@@ -13,6 +13,9 @@ Quality Control and Review
 	raw read data QA/QC
 		TOOLS: FastQC, NGSQC, Trimmomatic
 			discard low quality reads/segments/bases: FASTX-Toolkit, Trimmomatic
+			Trimmomatic notes:
+			consider trimming minimally and using minimum read length
+				https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
 		sequence quality
 		GC content
 		presence of adaptors "read through of adaptors"
@@ -179,6 +182,15 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
     Amazon cloud ‘computer’ that is already setup for bioinformatics work
     Allows for much faster computing, so we can compare many workflows quickly
     There are many AMI (Amazon machine image) setup and publically available to copy
+
+~Trim and QC https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0085024
+	For RNA-Seq must trim rather than correct (correction tools incl ABySS, ALLPATHS-LG)
+Trimmomatic https://academic.oup.com/nar/article/40/W1/W622/1751410
+	discard low quality reads/segments/bases: FASTX-Toolkit and/or Trimmomatic
+	intermediate Q threshold (~25) produces best output, shoud also use minimum read length cutoff
+		https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
+SolexaQA https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-485
+	loose Q threshold (~20) produces best output, should also use minimum read length cutoff
 
 ~De novo transcript reconstruction
 Aligners
