@@ -185,9 +185,20 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
 
 ~Trim and QC https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0085024
 	For RNA-Seq must trim rather than correct (correction tools incl ABySS, ALLPATHS-LG)
-Trimmomatic https://academic.oup.com/nar/article/40/W1/W622/1751410
+Trimmomatic https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4103590/pdf/btu170.pdf
 	discard low quality reads/segments/bases: FASTX-Toolkit and/or Trimmomatic
 	intermediate Q threshold (~25) produces best output, shoud also use minimum read length cutoff
+	should use palendrome mode (then simple mode??) to find adaptor readthrough
+	uses a sliding window that gets more strict as it progresses to the 3' end
+		maximum information quality filtering
+			length  threshold factor (t is target length, l is putative length after trimming):
+				ScoreLT(l) = 1/(1+e^(t-l))
+			coverage (l is retained seq length)
+				ScoreConv(l) = l
+			error rate for the read (l is putative length, Pcorr is probability of base call)
+				ScoreErr(l) = product of all Pcorr
+			Overall formula (s = strictness to control effect of error rate factor)
+				Score(l) = 1/(1+e^(t-l)) * l^(l-s) * (prod of all Pcorr)^s
 		https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
 SolexaQA https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-485
 	loose Q threshold (~20) produces best output, should also use minimum read length cutoff
