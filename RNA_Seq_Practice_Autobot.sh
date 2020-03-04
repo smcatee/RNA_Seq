@@ -16,6 +16,31 @@
 #   Tested on: SRR9984971, SRR9984973, SRR9984974
 SRA_Accession_Number="SRR9984971"
 
+# Variables for parameter testing
+#Trimmomatic:
+Trimmomatic_seed_mismatches=2 #[]
+Trimmomatic_palindrome_clip_threshold=30 #[]
+Trimmomatic_simple_clip_threshold=10 #[]
+Trimmomatic_fasta_adaptor_file=#/path/to/file
+Trimmomatic_windowSize= #[]
+Trimmomatic_requiredQuality=25 #[20-40]
+Trimmomatic_targetLength= #[ -150]
+Trimmomatic_strictness=1 #[0-1]
+Trimmomatic_quality_leading=20 #[10-30]
+Trimmomatic_quality_trailing=20 #[10-30]
+Trimmomatic_minLen=36 #[ -150]
+
+iluminaClip="ILUMINACLIP:<fastaWithAdaptersEtc>:${Trimmomatic_seed_mismatches}:${Trimmomatic_palindrome_clip_threshold}:true"
+slidingWindow="SLIDINGWINDOW:${Trimmomatic_windowSize}:${Trimmomatic_requiredQuality}"
+maxInfo="MAXINFO:${Trimmomatic_targetLength}:${Trimmomatic_strictness}"
+trimmLEADING="LEADING:${Trimmomatic_quality_leading}"
+trimmTRAILING="TRAILING:${Trimmomatic_quality_trailing}"
+minLen="MINLEN:${Trimmomatic_minLen}"
+
+trimmingMethod=""# $slidingWindow or $maxInfo
+
+parameterIteration=${iluminaClip}${trimmingMethod}${trimmLEADING}${trimmTRAILING}${minLen}
+
 currentDate=`date +"%F_%H%M"`
 
 
@@ -48,7 +73,11 @@ rm -r ./temp/Raw_Files/
 
 # Run reads through trimmomatic
 
+trimmomatic ./SRA_Files/Raw_Files/*1.fastq ./SRA_Files/Raw_Files/*2.fastq lane1_forward_paired.fq.gz lane1_forward_unpaired.fq.gz lane1_reverse_paired.fq.gz lane1_reverse_unpaired.fq.g "${parameterIteration}"
+
+
 # Run both trimmed and raw reads through FastQC
+
 
 # Compress raw reads files and erase uncompressed versions
 
