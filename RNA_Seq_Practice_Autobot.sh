@@ -7,56 +7,63 @@
 
 # PATH variables:
 #   SRA Toolkit, FASTX-Toolkit
-# Alias variable names:
-#   alias samtools='/Applications/samtools/samtools'
-#   alias trimmomatic='java -jar /Applications/Trimmomatic-0.39/trimmomatic-0.39.jar'
+# Program path variables:
+fastqc=/Applications/FastQC.app/Contents/MacOS/fastqc
+trimmomatic=/Applications/Trimmomatic-0.39/trimmomatic-0.39.jar
+trinity=/Applications/trinityrnaseq-v2.9.1/Trinity
 
 
 # Enter the accession number that you would like to run through Autobot
 #   Tested on: SRR9984971, SRR9984973, SRR9984974
 SRA_Accession_Number="SRR9984971"
 
+
 # Variables for parameter testing
 #Trimmomatic:
 Trimmomatic_seed_mismatches=2 #[]
-Trimmomatic_palindrome_clip_threshold=30 #[]
-Trimmomatic_simple_clip_threshold=10 #[]
-Trimmomatic_fasta_adaptor_file=#/path/to/file
-Trimmomatic_windowSize= #[]
-Trimmomatic_requiredQuality=25 #[20-40]
-Trimmomatic_targetLength= #[ -150]
-Trimmomatic_strictness=1 #[0-1]
+Trimmomatic_palindrome_clip_threshold=40 #[]
+Trimmomatic_simple_clip_threshold=15 #[]
+Trimmomatic_minAdapterLength=8 #[]
+Trimmomatic_fasta_adaptor_file="/Applications/Trimmomatic-0.39/adapters/adapters_cat.fa" #/path/to/file
+Trimmomatic_windowSize=4 #[]
+Trimmomatic_requiredQuality=15 #[20-40]
+Trimmomatic_targetLength=40 #[ -150]
+Trimmomatic_strictness=0.9 #[0-1]
 Trimmomatic_quality_leading=20 #[10-30]
 Trimmomatic_quality_trailing=20 #[10-30]
-Trimmomatic_minLen=36 #[ -150]
+Trimmomatic_head_crop_length=10 #[]
+Trimmomatic_minLen=50 #[ -150]
 
-iluminaClip="ILUMINACLIP:<fastaWithAdaptersEtc>:${Trimmomatic_seed_mismatches}:${Trimmomatic_palindrome_clip_threshold}:true"
-slidingWindow="SLIDINGWINDOW:${Trimmomatic_windowSize}:${Trimmomatic_requiredQuality}"
-maxInfo="MAXINFO:${Trimmomatic_targetLength}:${Trimmomatic_strictness}"
-trimmLEADING="LEADING:${Trimmomatic_quality_leading}"
-trimmTRAILING="TRAILING:${Trimmomatic_quality_trailing}"
-minLen="MINLEN:${Trimmomatic_minLen}"
+illuminaClip="ILLUMINACLIP:${Trimmomatic_fasta_adaptor_file}:${Trimmomatic_seed_mismatches}:${Trimmomatic_palindrome_clip_threshold}:${Trimmomatic_simple_clip_threshold}:${Trimmomatic_minAdapterLength}:TRUE "
+slidingWindow="SLIDINGWINDOW:${Trimmomatic_windowSize}:${Trimmomatic_requiredQuality} "
+maxInfo="MAXINFO:${Trimmomatic_targetLength}:${Trimmomatic_strictness} "
+trimmLEADING="LEADING:${Trimmomatic_quality_leading} "
+trimmTRAILING="TRAILING:${Trimmomatic_quality_trailing} "
+trimmHeadCrop="HEADCROP:${Trimmomatic_head_crop_length} "
+minLen="MINLEN:${Trimmomatic_minLen} "
 
-trimmingMethod=""# $slidingWindow or $maxInfo
+trimmingMethod=${maxInfo} # $slidingWindow or $maxInfo
 
-parameterIteration=${iluminaClip}${trimmingMethod}${trimmLEADING}${trimmTRAILING}${minLen}
+trimmomaticParameters=${illuminaClip}${trimmingMethod}${trimmLEADING}${trimmTRAILING}${trimmHeadCrop}${minLen}
 
 currentDate=`date +"%F_%H%M"`
+
 
 
 # Setup directory tree and move to working directory
 echo "Setting up directory"
 mkdir -p RNA_Seq_Practice_Run_${currentDate}/${SRA_Accession_Number}/{SRA_Files/{Raw_Files,Trimmed_Files,QC_Output},Aligner_Output/{Trinity,BowTie,STAR,Oasis,QC}}
-cd RNA_Seq_Practice_Run_${currentDate}/${SRA_Accession_Number}/
+cd RNA_Seq_Practice_Run_*/SRR9984971/
 
 # Download split fastq reads for trimmomatic
 echo "Downloading fastq files"
-fastq-dump --split-files -O SRA_Files/Raw_Files/ ${SRA_Accession_Number}
+fastq-dump --split-files -O SRA_Files/Raw_Files/ --gzip ${SRA_Accession_Number}
+
 
 # Re-download to perform hashsum check
 echo "Redownloading fastq files in a temp folder to check hashsum"
 mkdir -p ./temp/Raw_Files/
-fastq-dump --split-files -O ./temp/Raw_Files/ ${SRA_Accession_Number}
+fastq-dump --split-files -O ./temp/Raw_Files/ --gzip ${SRA_Accession_Number}
 
 # If hashsum values are not equal re-download up to 10 times, else quit with error message
 loopCount=0
@@ -71,15 +78,21 @@ done
 rm -r ./temp/Raw_Files/
 
 
-# Run reads through trimmomatic
-
-trimmomatic ./SRA_Files/Raw_Files/*1.fastq ./SRA_Files/Raw_Files/*2.fastq lane1_forward_paired.fq.gz lane1_forward_unpaired.fq.gz lane1_reverse_paired.fq.gz lane1_reverse_unpaired.fq.g "${parameterIteration}"
+# Trimming commands (replace repetative file names with variable expansion)
+#  Keeps paired trim reads and discards unpaired trim reads
+mkdir -p ./temp/unpairedReads/
+java -jar ${trimmomatic} PE ./SRA_Files/Raw_Files/*1.fastq.gz ./SRA_Files/Raw_Files/*2.fastq.gz ./SRA_Files/Trimmed_Files/lane1_forward_paired.fq.gz ./temp/unpairedReads/f_unpaired.fq.gz ./SRA_Files/Trimmed_Files/lane1_reverse_paired.fq.gz ./temp/unpairedReads/r_unpaired.fq.g "${trimmomaticParameters}"
+rm -r ./temp/unpairedReads/
 
 
 # Run both trimmed and raw reads through FastQC
+${fastqc} ./SRA_Files/Trimmed_Files/*fq.gz --outdir=./SRA_Files/QC_Output/
+${fastqc} ./SRA_Files/Raw_Files/*.fastq.gz --outdir=./SRA_Files/QC_Output/
 
 
-# Compress raw reads files and erase uncompressed versions
+# Pause?
 
-# Pause to give user options for proceeding steps based on FastQC output
-#   Options:
+# Trinity
+trinity --seqType 
+
+rm -r ./temp/

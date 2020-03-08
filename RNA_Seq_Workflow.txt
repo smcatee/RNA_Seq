@@ -199,6 +199,7 @@ Trimmomatic https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4103590/pdf/btu170.pdf
 				ScoreErr(l) = product of all Pcorr
 			Overall formula (s = strictness to control effect of error rate factor)
 				Score(l) = 1/(1+e^(t-l)) * l^(l-s) * (prod of all Pcorr)^s
+
 		https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
 SolexaQA https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-485
 	loose Q threshold (~20) produces best output, should also use minimum read length cutoff
@@ -208,19 +209,20 @@ Aligners
     Trinity
     Bowtie/TopHat
         Low memory use, high time
-STAR
-    Low time use, high memory
-HISAT2
-    Uses indexing to cut down memory and time
-    Splice aware (req ref genome, always??)
-QA/QC: Picard, RSeQC, Qualimap
-Types of QC for alignment
-    3’ and 5’ bias (looks at coverage from beginning to end of reads)
-        The coverage should be mostly equal across 
-    Nucleotide Content
-        Random hexamer primers in cDNA step aren’t totally random
-        The hexamer patterns are overexpressed in the beginning of reads
-            (should explain with a drawing)
+	STAR
+		Low time use, high memory
+	HISAT2
+		Uses indexing to cut down memory and time
+		Splice aware (req ref genome, always??)
+	Sailfish
+	QA/QC: Picard, RSeQC, Qualimap
+	Types of QC for alignment
+		3’ and 5’ bias (looks at coverage from beginning to end of reads)
+			The coverage should be mostly equal across 
+		Nucleotide Content
+			Random hexamer primers in cDNA step aren’t totally random
+			The hexamer patterns are overexpressed in the beginning of reads
+				(should explain with a drawing)
 Normal nucleotide content is ~25% for each A, T, G, C
 Only effects the first 10 or so bases (why not only the first 6??)
 Easy to adjust, simply trim first 10 bases if the nucleotide content is out of whack
