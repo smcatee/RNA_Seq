@@ -93,6 +93,6 @@ ${fastqc} ./SRA_Files/Raw_Files/*.fastq.gz --outdir=./SRA_Files/QC_Output/
 # Pause?
 
 # Trinity
-trinity --seqType 
+#trinity --seqType fq --max_memory <int>G --left <string> --right <string> --CPU 2 --min_contig_length 200 --no_normalize_reads --output <string> --version
 
 rm -r ./temp/
