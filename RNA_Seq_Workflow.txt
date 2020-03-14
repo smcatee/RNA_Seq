@@ -208,8 +208,8 @@ SolexaQA https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-
 Aligners
     Trinity
     	can combine the unpaired data with the left reads of the paired fragments
-	give unpaired reads a /1 as suffix to accession value
-	right fragment reads should all have /2 as the accession suffix 
+		give unpaired reads a /1 as suffix to accession value
+		right fragment reads should all have /2 as the accession suffix 
     Bowtie/TopHat
         Low memory use, high time
 	STAR
