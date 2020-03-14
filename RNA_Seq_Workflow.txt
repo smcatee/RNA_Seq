@@ -335,6 +335,7 @@ Phread Score: https://en.wikipedia.org/wiki/Phred_quality_score
     Probability of wrong base = 10^(-Phred/10)
     E.g.    Phred = 30 has 1/1000 chance of the base being wrong (accuracy = 99.9%)
         Phred = 50 has 1/100,000 chance of the base being wrong (accuracy = 99.999%)
+	All NCBI SRA should be Phred+33 encoding
 
 Duplicates, i.e. PCR Duplication
     A problem during amplification where certain fragments are duplicated early on and become amplified more than others (since amplification is exponential copying)

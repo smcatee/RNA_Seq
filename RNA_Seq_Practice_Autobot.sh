@@ -87,6 +87,7 @@ mkdir -p ./temp/Raw_Files/
 fasterq-dump --split-files -O ./temp/Raw_Files/ ${SRA_Accession_Number} -p
 
 # If hashsum values are not equal re-download up to 10 times, else quit with error message
+echo "Calculating hashsums"
 loopCount=0
 while [[ 0x`openssl dgst -sha1 -binary ./SRA_Files/Raw_Files/* | xxd -p -c 1000` -ne 0x`openssl dgst -sha1 -binary ./SRA_Files/Raw_Files/* | xxd -p -c 1000` ]] && (( ${loopCount} < 5))
 do
@@ -94,7 +95,7 @@ do
     mv ./temp/Raw_Files/* ./SRA_Files/Raw_Files/
     fasterq-dump --split-files -O ./temp/Raw_Files/ ${SRA_Accession_Number} -p
     loopCount=$((loopCount+1))
-echo "Checked hashsum ${loopCount} times. Autobot will redownload and eventually quit after 5 times"
+    echo "Checked hashsum ${loopCount} times. Autobot will redownload and eventually quit after 5 times"
 done
 rm -r ./temp/Raw_Files/
 
@@ -108,24 +109,31 @@ for sample in ./SRA_Files/Raw_Files/*1.f*q.gz
 do
     sampleName=`echo ${sample} | sed -e "s/^\.\/SRA_Files\/Raw_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
 
-    # Trimmomatic
-    echo "Running Trimmomatic with parameters:"
+    # Trimmomatic Subshell
+    echo "Initiating Trimmmomatic subshell"
+    (echo "Running Trimmomatic with parameters:"
     echo "${trimmomaticParameters}"
-    java -jar ${trimmomatic} PE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Raw_Files/${sampleName}2.fastq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1u.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2u.fq.gz ${trimmomaticParameters}
+    java -jar ${trimmomatic} PE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Raw_Files/${sampleName}2.fastq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1u.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2u.fq.gz ${trimmomaticParameters}) &
 
-    # SolexaQA++
-    ${solexaqa} dynamictrim ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ${SolexaQA_cutoff} ${SolexaQA_BWA} --directory ./temp/ --illumina
+    # SolexaQA++ with Trimmomatic Headcrop Subshell
+    java -jar ${trimmomatic} SE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Trimmed_Files/headcrop_${sampleName}1.fq.gz HEADCROP:${Trimmomatic_head_crop_length}
+    java -jar ${trimmomatic} SE ./SRA_Files/Raw_Files/${sampleName}2.f*q.gz ./SRA_Files/Trimmed_Files/headcrop_${sampleName}2.fq.gz HEADCROP:${Trimmomatic_head_crop_length}
+    echo "Initiating SolexaQA subshell"
+    (${solexaqa} dynamictrim ./SRA_Files/Trimmed_Files/headcrop_${sampleName}1.fq.gz ${SolexaQA_cutoff} ${SolexaQA_BWA} --directory ./temp/ --illumina
     # output to temp, rename & move trimmed file, later erase all other junk
     mv ./temp/*.gz "./SRA_Files/Trimmed_Files/solexaqa_${sampleName}1.fq.gz"
-    ${solexaqa} dynamictrim ./SRA_Files/Raw_Files/${sampleName}2.f*q.gz ${SolexaQA_cutoff} ${SolexaQA_BWA} --directory ./temp/ --illumina
-    mv ./temp/*.gz "./SRA_Files/Trimmed_Files/solexaqa_${sampleName}2.fq.gz"
+    ${solexaqa} dynamictrim ./SRA_Files/Trimmed_Files/headcrop_${sampleName}2.fq.gz ${SolexaQA_cutoff} ${SolexaQA_BWA} --directory ./temp/ --illumina
+    mv ./temp/*.gz "./SRA_Files/Trimmed_Files/solexaqa_${sampleName}2.fq.gz")
+    wait
 done
 rm ./temp/*
 
 
 # Run both trimmomatic, solexa, and raw reads through FastQC
-${fastqc} ./SRA_Files/Trimmed_Files/*fq.gz --outdir=./SRA_Files/QC_Output/
-${fastqc} ./SRA_Files/Raw_Files/*.fastq.gz --outdir=./SRA_Files/QC_Output/
+(${fastqc} ./SRA_Files/Trimmed_Files/*fq.gz --outdir=./SRA_Files/QC_Output/) &
+(${fastqc} ./SRA_Files/Raw_Files/*.fastq.gz --outdir=./SRA_Files/QC_Output/) &
+wait
+rm ./SRA_Files/QC_Output/*.zip
 
 # Pause and user input?
 
