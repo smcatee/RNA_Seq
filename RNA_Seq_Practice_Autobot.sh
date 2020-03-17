@@ -113,7 +113,7 @@ do
     echo "Initiating Trimmmomatic subshell"
     (echo "Running Trimmomatic with parameters:"
     echo "${trimmomaticParameters}"
-    java -jar ${trimmomatic} PE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Raw_Files/${sampleName}2.fastq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1u.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2.fq.gz ./SRA_Files/Trimmed_Files/traimmomatic_${sampleName}2u.fq.gz ${trimmomaticParameters}) &
+    java -jar ${trimmomatic} PE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Raw_Files/${sampleName}2.fastq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}1u.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}2.fq.gz ./SRA_Files/Trimmed_Files/trimmomatic_${sampleName}2u.fq.gz ${trimmomaticParameters}) &
 
     # SolexaQA++ with Trimmomatic Headcrop Subshell
     java -jar ${trimmomatic} SE ./SRA_Files/Raw_Files/${sampleName}1.f*q.gz ./SRA_Files/Trimmed_Files/headcrop_${sampleName}1.fq.gz HEADCROP:${Trimmomatic_head_crop_length}
@@ -138,11 +138,21 @@ rm ./SRA_Files/QC_Output/*.zip
 # Pause and user input?
 
 
-# Trinity
+# Trinity (only uses unpaired now..)
+#Samples file is a list of samples and replicates for Trinity input
+touch ./Aligner_Output/Trinity/samples.txt
+for sample in ./SRA_Files/Raw_Files/*1.f*q.gz
+do
+    sampleName=`echo ${sample} | sed -e "s/^\.\/SRA_Files\/Raw_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
+    for replicate in ./SRA_Files/Trimmed_Files/*${sampleName}*1.f*q.gz
+    do
+        fileType=`echo ${replicate} | egrep -o '\.f.*q\.gz'`
+        replicateName=`echo ${replicate} | sed -e "s/^\.\/SRA_Files\/Trimmed_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
+        echo -e "${sampleName}\t${replicateName}\t${replicateName}1${fileType}\t${replicateName}2${fileType}" >> ./Aligner_Output/Trinity/samples.txt
+    done
+done
 
-#For each sample
-#append all unpaired fastq to the left paired read file
-#trinity --seqType fq --max_memory 3G --left <string> --right <string> --CPU 2 --min_contig_length 200 --no_normalize_reads --output ./Aligner_Output/Trinity/ --version
+trinity --seqType fq --max_memory 3G --samples_file ./Aligner_Output/Trinity/samples.txt --CPU 2 --min_contig_length 200 --no_normalize_reads --output ./Aligner_Output/Trinity/ --version
 
 
 
