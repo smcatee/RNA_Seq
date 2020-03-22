@@ -12,7 +12,7 @@ shopt -s extglob # necessary?? for using sed with -E
 
 
 
-####### Ú◊ ÁÎ ÚÁ ÔÎ ÇÇ     T E S T I N G   N O T E S    Ó ˜˜ Ô◊ ÁÔ Ó˝ ÎÁ Ç˝ Ç ˇÍ
+####### Ú◊ ÁÎ ÚÁ ÔÎ ÇÇ        T E S T I N G   N O T E S       Ó ˜˜ Ô◊ ÁÔ Ó˝ ÎÁ Ç˝ Ç ˇÍ
 ####   Remember to edit line 60 to cd into the correctly dated directory
 ####   paired reads are denoted *1.fq.gz or *2.fq.gz before the file type for paired; unpaired reads are denoted *1u.fq.gz or *2u.fq.gz
 
