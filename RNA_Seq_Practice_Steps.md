@@ -30,6 +30,15 @@ Here's the rub
     - Wide variability in mRNA length and quantity makes fragment counting confusing because
  - Evolution of new genes usually happens with recombination of preexisting genes, then semi-random point mutations.  So many mRNA sequences have similar or identical sections, and once fragmented for sequencing these similarities make it hard to distinguish one from the other.
 
+## Important Vocab
+### Knowing these terms will help make sense of what you are about to learn
+
+||||||
+|:-:|:-:|:-:|:-:|:-:|
+|word|word|word|word|word|
+|word|word|word|word|word|
+|word|word|word|word|word|
+|word|word|word|word|word|
 
 ## Downloading and checking data
 
