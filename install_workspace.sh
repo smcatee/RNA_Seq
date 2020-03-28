@@ -25,9 +25,12 @@ brew install boost
 ## APPLICATION DOWNLOADS
 sudo -s
 cd /opt
+
 # SRA Toolkit
 wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.4/sratoolkit.2.10.4-ubuntu64.tar.gz
 tar -zxvf sratoolkit*.tar.gz
+PATH="${PATH}:/opt/sratoolkit.2.10.4-ubuntu64/bin"
+source /etc/environment && export PATH
 
 # FastQC
 wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
@@ -60,7 +63,6 @@ wget https://www.ebi.ac.uk/~zerbino/velvet/velvet_1.2.10.tgz
 tar -zxvf velvet_1.2.10.tgz
 cd velvet*/
 make
-make doc
 cd ..
 mv velvet*/ velvet/
 wget https://www.ebi.ac.uk/~zerbino/oases/oases_0.2.08.tgz
@@ -69,7 +71,7 @@ cd oases*/
 make
 
 # SOAPdenovo-Trans
-git https://github.com/aquaskyline/SOAPdenovo-Trans.git
+wget https://github.com/aquaskyline/SOAPdenovo-Trans.git
 cd ../SOAPdenovo-Trans/
 bash make.sh
 bash clean.sh
@@ -102,4 +104,6 @@ bash clean.sh
 # make
 
 
+rm *.tgz *.zip *.tar.gz 
 
+exit
