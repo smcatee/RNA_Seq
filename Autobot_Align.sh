@@ -20,10 +20,10 @@ do
     do
         fileType=`echo ${replicate} | egrep -o '\.f.*q\.gz'`
         replicateName=`echo ${replicate} | sed -e "s/^\.\/SRA_Files\/Trimmed_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
-        echo -e "${sampleName}\t${replicateName}\t${replicateName}1${fileType}\t${replicateName}2${fileType}" >> ./Aligner_Output/Trinity/samples.txt
+        echo -e "${sampleName}\t${replicateName}\t./SRA_Files/Trimmed_Files/${replicateName}1${fileType}\t./SRA_Files/Trimmed_Files/${replicateName}2${fileType}" >> ./Aligner_Output/Trinity/samples.txt
     done
 done
 
-#trinity --seqType fq --max_memory ${Trinity_max_memory} --samples_file ./Aligner_Output/Trinity/samples.txt --CPU ${Trinity_CPUs} --min_contig_length 200 --no_normalize_reads --output ./Aligner_Output/Trinity/ --version
+#trinity --seqType fq --max_memory ${Trinity_max_memory} --samples_file ./Aligner_Output/Trinity/samples.txt --CPU ${Trinity_CPUs} --min_contig_length 200 --no_normalize_reads --output ./Aligner_Output/Trinity/
 
 
