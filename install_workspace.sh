@@ -31,10 +31,20 @@ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.4/sratoolkit.2.10.4-ubuntu64
 tar -zxvf sratoolkit*.tar.gz
 PATH="${PATH}:/opt/sratoolkit.2.10.4-ubuntu64/bin"
 source /etc/environment && export PATH
+vdb-config --restore-defaults
 
 # FastQC
 wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
 unzip fastqc*.zip
+chmod 755 ./FastQC/fastqc
+
+# Trimmomatic
+wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip
+unzip Trimmomatic*.zip
+touch ./Trimmomatic-0.39/adapters/all_adapters.fa
+chmod a+w ./Trimmomatic-0.39/adapters/all_adapters.fa
+cat ./trimmomatic-0.39/adapters/* | sed 's/>/\n>/g' > ./trimmomatic-0.39/adapters/all_adapters.fa
+
 
 # SolexaQA (requires boost)
 wget https://sourceforge.net/projects/solexaqa/files/src/SolexaQA%2B%2B_v3.1.7.1.zip
