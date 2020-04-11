@@ -29,7 +29,7 @@ trinity=/Applications/trinityrnaseq-v2.9.1/Trinity
 
 # Enter the accession number that you would like to run through Autobot
 #   Tested on: SRR9984971, SRR9984973, SRR9984974
-
+SRA_Accession_Number=SRR9984971
 
 
 # Variables for parameter testing

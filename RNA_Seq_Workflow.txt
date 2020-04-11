@@ -205,6 +205,22 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
 
 	log out, log in
 
+
+	# BIOCONDA INSTALL METHOD
+	conda config --add channels defaults
+	conda config --add channels conda-forge
+	conda config --add channels bioconda
+	conda config --add channels gouarin
+
+	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa (in linux) emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss detonate rsem sailfish
+	conda activate RNA-Seq
+	conda env list
+	
+	# need?? emacs25, gcc-7.1, g++-7
+
+
+	# OLD GROSS INSTALL METHOD
+
 	Install Homebrew
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 	set PATH
@@ -348,6 +364,12 @@ TMM - some sort of normalization tech
 
 ~Batch effect correction (maybe)
 COMBAT, ARSyN
+
+~Alignment comparison
+DETONATE - RSEM-EVAL https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0553-5
+	produces a score that can compare alginments
+	first run `rsem-eval-estimate-transcript-length-distribution`
+	then use that output while running `rsem-eval-calculate-score`
 
 ~Differential gene expression and/or differential transcript usage (all can be run and compared)
 Cuffdiff (takes Cufflinks output)
