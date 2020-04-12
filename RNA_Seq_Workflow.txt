@@ -473,6 +473,15 @@ RSeQC:
 Qualimap:
     facilitate the quality control of alignment sequencing data and its derivatives like feature counts
 
+N50:
+    the length (bp) of the length-weighted median read
+    "50% of this genome's bp are contained in reads >= n"
+    
+RSEM-EVAL
+    reference free transcriptome assembly evaluation method
+    based on the joint probability of an assembly(A) and its reads(D). logP(A,D)
+    stores each contig's impact upon the assembly, allowing low-impact contigs to be trimmed
+
 NOISeq (Bioconductor):
     “Exploratory plots to evaluate saturation, count distribution, expression per chromosome, type of detected features, features length, etc.”
     Makes good plots
