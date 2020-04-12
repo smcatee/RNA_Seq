@@ -212,7 +212,7 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
 	conda config --add channels bioconda
 	conda config --add channels gouarin
 
-	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa (in linux) emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss detonate rsem sailfish
+	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa (in linux) emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss bowtie2 detonate rsem sailfish
 	conda activate RNA-Seq
 	conda env list
 	
