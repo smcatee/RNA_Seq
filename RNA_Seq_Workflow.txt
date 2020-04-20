@@ -213,12 +213,12 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
 	conda config --add channels gouarin
 	
 	# RCORRECTOR CONTAINS JELLYFISH2
-	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa rcorrector emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss bowtie2 detonate rsem sailfish
+	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa cutadapt rcorrector emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss bowtie2 detonate rsem sailfish
 	conda activate RNA-Seq
 	conda env list
 	
 	# need?? emacs25, gcc-7.1, g++-7
-
+	# manually get trimgalore
 
 	# OLD GROSS INSTALL METHOD
 
@@ -294,6 +294,9 @@ Trimmomatic https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4103590/pdf/btu170.pdf
 		https://www.rna-seqblog.com/you-might-be-ruining-your-rna-seq-data/
 SolexaQA https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-485
 	loose Q threshold (~20) produces best output, should also use minimum read length cutoff
+
+TrimGalore
+	trimgalore --paired --fastqc --illumina --clip_R2 10 -o <outDIR> <read1> <read2>
 
 ~De novo transcript reconstruction
 Aligners
