@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Program path variables:
-trinity=/home/ubuntu/anaconda2/pkgs/trinity-2.9.1-h8b12597_0/bin/Trinity
+#trinity=/home/ubuntu/anaconda2/pkgs/trinity-2.9.1-h8b12597_0/bin/Trinity
 
 
 
@@ -24,5 +24,5 @@ do
     done
 done
 
-trinity --seqType fq --max_memory ${Trinity_max_memory}G --samples_file ./Aligner_Output/Trinity/samples.txt --CPU ${Trinity_CPUs} --min_contig_length 200 --no_normalize_reads --monitoring --output ./Aligner_Output/Trinity/
+Trinity --seqType fq --max_memory ${Trinity_max_memory}G --samples_file ./Aligner_Output/Trinity/samples.txt --CPU ${Trinity_CPUs} --min_contig_length 200 --no_normalize_reads --monitoring --output ./Aligner_Output/Trinity/
 
