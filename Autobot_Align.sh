@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Program path variables:
-trinity=/opt/trinityrnaseq*/Trinity
+trinity=/home/ubuntu/anaconda2/pkgs/trinity-2.9.1-h8b12597_0/bin/Trinity
 
 
 
@@ -13,13 +13,13 @@ Trinity_max_memory=`free -g | awk 'FNR == 2 {print $4}'`
 # Trinity (only uses unpaired now..)
 #Samples file is a list of samples and replicates for Trinity input
 touch ./Aligner_Output/Trinity/samples.txt
-for sample in ./SRA_Files/Raw_Files/*1.f*q.gz
+for sample in ./SRA_Files/Raw_Files/*1.f*q
 do
-    sampleName=`echo ${sample} | sed -e "s/^\.\/SRA_Files\/Raw_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
-    for replicate in ./SRA_Files/Trimmed_Files/*${sampleName}*1.f*q.gz
+    sampleName=`echo ${sample} | sed -e "s/^\.\/SRA_Files\/Raw_Files\///" -Ee "s/[12]u?\.f.*q$//"`
+    for replicate in ./SRA_Files/Trimmed_Files/*${sampleName}*1.f*q
     do
-        fileType=`echo ${replicate} | egrep -o '\.f.*q\.gz'`
-        replicateName=`echo ${replicate} | sed -e "s/^\.\/SRA_Files\/Trimmed_Files\///" -Ee "s/[12]u?\.f.*q\.gz$//"`
+        fileType=`echo ${replicate} | egrep -o '\.f.*q'`
+        replicateName=`echo ${replicate} | sed -e "s/^\.\/SRA_Files\/Trimmed_Files\///" -Ee "s/[12]u?\.f.*q$//"`
         echo -e "${sampleName}\t${replicateName}\t./SRA_Files/Trimmed_Files/${replicateName}1${fileType}\t./SRA_Files/Trimmed_Files/${replicateName}2${fileType}" >> ./Aligner_Output/Trinity/samples.txt
     done
 done
