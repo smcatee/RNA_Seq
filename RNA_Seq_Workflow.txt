@@ -213,7 +213,7 @@ QA/QC: FastQC, FASTX-Toolkit, Trimmomatic
 	conda config --add channels gouarin
 	
 	# RCORRECTOR CONTAINS JELLYFISH2
-	conda create -n RNA-Seq python=2.7 gcc boost sra-tools samtools fastqc trimmomatic solexaqa cutadapt rcorrector emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss bowtie2 detonate rsem sailfish
+	conda install -n RNA-Seq python=2.7 boost sra-tools samtools fastqc trimmomatic solexaqa cutadapt rcorrector emacs gmap jellyfish bowtie2 salmon trinity texlive-core velvet oases soapdenovo-trans transabyss bowtie2 detonate rsem sailfish
 	conda activate RNA-Seq
 	conda env list
 	

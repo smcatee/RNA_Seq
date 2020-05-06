@@ -19,11 +19,11 @@ Trimmomatic_simple_clip_threshold=15 #[]
 Trimmomatic_minAdapterLength=8 #[]
 Trimmomatic_windowSize=4 #[]
 Trimmomatic_requiredQuality=15 #[20-40]
-Trimmomatic_targetLength=40 #[ -150]
+Trimmomatic_targetLength=40 #[ ??-150]
 Trimmomatic_strictness=0.9 #[0-1]
 Trimmomatic_quality_leading=20 #[10-30]
 Trimmomatic_quality_trailing=20 #[10-30]
-Trimmomatic_minLen=50 #[ -150]
+Trimmomatic_minLen=50 #[ ??-150]
 
 trimmHeadCrop="HEADCROP:${Trimmomatic_head_crop_length} "
 illuminaClip="ILLUMINACLIP:${Trimmomatic_fasta_adaptor_file}:${Trimmomatic_seed_mismatches}:${Trimmomatic_palindrome_clip_threshold}:${Trimmomatic_simple_clip_threshold}:${Trimmomatic_minAdapterLength}:TRUE "
@@ -77,3 +77,6 @@ rm ./temp/*
 (${fastqc} ./SRA_Files/Raw_Files/*.fastq.gz --outdir=./SRA_Files/QC_Output/) &
 wait
 rm ./SRA_Files/QC_Output/*.zip
+
+
+
